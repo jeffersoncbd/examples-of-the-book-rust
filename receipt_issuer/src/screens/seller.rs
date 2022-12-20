@@ -1,14 +1,15 @@
-use crate::{terminal::Terminal, structures::Sale};
+use crate::{terminal::Terminal, structures::{Sale, Client}};
 use crossterm::{execute, style::Print, cursor};
 
 pub struct Seller {
   pub name: String,
   pub address: String,
   pub invoicing: f64,
+  pub clients: Vec<Client>
 }
 impl Seller {
-  fn new(name: String, address: String) -> Seller {
-    Seller { name, address, invoicing: 0.0 }
+  pub fn new(name: String, address: String) -> Seller {
+    Seller { name, address, invoicing: 0.0, clients: Vec::new() }
   }
   pub fn new_sale(&mut self, sale: &Sale) {
     self.invoicing += sale.total();

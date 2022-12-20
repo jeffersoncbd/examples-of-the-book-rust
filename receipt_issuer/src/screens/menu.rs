@@ -12,6 +12,8 @@ pub fn load(terminal: &mut Terminal) -> u32 {
     Print("  │                                                   │\n"),
     Print("  │ [1] Nova venda                                    │\n"),
     Print("  │ [2] Consultar faturamento                         │\n"),
+    Print("  │ [3] Listar Clientes                               │\n"),
+    Print("  │ [4] Novo Cliente                                  │\n"),
     Print("  │ [0] Encerrar sistema                              │\n"),
     Print("  │                                                   │\n"),
     Print("  ╰───────────────────────────────────────────────────╯"),
@@ -27,7 +29,7 @@ pub fn load(terminal: &mut Terminal) -> u32 {
     Err(_) => return load(terminal),
   };
 
-  if option > 2 {
+  if option > 4 {
     return load(terminal)
   }
   option

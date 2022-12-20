@@ -13,7 +13,11 @@ fn main() {
 
   terminal.fake_loading();
 
-  let mut seller = screens::seller::load(&mut terminal);
+  // let mut seller = screens::seller::load(&mut terminal);
+  let mut seller = Seller::new(
+    String::from("Jefferson"),
+    String::from("Brasil")
+  );
 
   terminal.fake_loading();
 
@@ -32,6 +36,8 @@ fn application(terminal: &mut Terminal, seller: &mut Seller) {
   match option {
     1 => screens::new_sale::load(terminal, seller),
     2 => screens::billing::load(terminal, seller),
+    3 => screens::clients::load(terminal, seller),
+    4 => screens::new_client::load(terminal, seller),
     0 => { terminal.end = true; },
     _ => panic!("Unexpected option"),
   }

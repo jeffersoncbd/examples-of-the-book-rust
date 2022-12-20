@@ -11,7 +11,7 @@ pub struct Product {
 }
 
 pub struct Sale {
-  pub client: Client,
+  pub client_code: usize,
   pub product: Product,
   pub amount: u32
 }

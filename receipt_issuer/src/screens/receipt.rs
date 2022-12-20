@@ -7,6 +7,10 @@ use crossterm::{execute, style::Print, cursor};
 
 pub fn load(terminal: &mut Terminal, seller: &Seller, sale: &Sale) {
   terminal.clear();
+  let client = match seller.clients.get(sale.client_code) {
+    Some(client) => client,
+    None => panic!("O cliente cadastrado na venda não existe")
+  };
   execute!(
     terminal.stdout,
     Print("\n\n"),
@@ -23,11 +27,11 @@ pub fn load(terminal: &mut Terminal, seller: &Seller, sale: &Sale) {
     Print("  │                                          │ logo │ │\n"),
     Print("  │  Cliente:                                ╰──────╯ │\n"),
     cursor::MoveTo(14,7),
-    Print(format!("{}", sale.client.name)),
+    Print(format!("{}", client.name)),
     cursor::MoveTo(0,8),
     Print("  │  Endereço:                                        │\n"),
     cursor::MoveTo(15,8),
-    Print(format!("{}", sale.client.address)),
+    Print(format!("{}", client.address)),
     cursor::MoveTo(0,9),
     Print("  │                                                   │\n"),
     cursor::MoveTo(

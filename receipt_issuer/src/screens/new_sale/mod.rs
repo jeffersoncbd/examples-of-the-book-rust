@@ -5,6 +5,8 @@ use crate::{
 };
 use crossterm::{execute, style::Print, cursor};
 
+mod get_client;
+mod get_amount;
 
 pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
   terminal.clear();
@@ -16,7 +18,8 @@ pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
     Print("  │  Vendedor:                                        │\n"),
     Print("  │  Endereço:                                        │\n"),
     Print("  │                                                   │\n"),
-    Print("  │  [Dados do cliente]                               │\n"),
+    Print("  │  [Cliente]                                        │\n"),
+    Print("  │  Código:                                          │\n"),
     Print("  │  Nome:                                            │\n"),
     Print("  │  Endereço:                                        │\n"),
     Print("  │                                                   │\n"),
@@ -28,6 +31,7 @@ pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
     Print("  │  Valor TOTAL:                                     │\n"),
     Print("  │                                                   │\n"),
     Print("  ╰───────────────────────────────────────────────────╯\n"),
+    Print("     Para novo cliente, deixe o código em branco"),
     cursor::EnableBlinking,
   ).expect("Não foi possível imprimir o formulário de nova venda");
 
@@ -37,38 +41,20 @@ pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
   terminal.move_to(15, 5);
   terminal.print(seller.address.trim());
 
-  // define client data
-  terminal.move_to(11, 8);
-  let name = terminal.read_line();
-  terminal.move_to(15, 9);
-  let address = terminal.read_line();
-  let client = Client { name, address };
+  // define client
+  let client_code = get_client::get_client_code(terminal, seller);
 
-  fn get_amount(terminal: &mut Terminal) -> u32 {
-    terminal.move_to(17, 12);
-    let amount = terminal.read_line();
-
-    let amount: u32 = match amount.trim().parse() {
-      Ok(num) => num,
-      Err(_) => {
-        terminal.move_to(17, 13);
-        terminal.print("                                     │");
-        return get_amount(terminal)
-      },
-    };
-    amount
-  }
   // define amount
   let amount = get_amount(terminal);
 
   fn get_value(terminal: &mut Terminal) -> f64 {
-    terminal.move_to(21, 14);
+    terminal.move_to(21, 15);
     let value = terminal.read_line();
 
     let value: f64 = match value.trim().parse() {
       Ok(num) => num,
       Err(_) => {
-        terminal.move_to(21, 14);
+        terminal.move_to(21, 15);
         terminal.print("                                 │");
         return get_value(terminal)
       },
@@ -76,26 +62,26 @@ pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
     value
   }
   // define product
-  terminal.move_to(16, 13);
+  terminal.move_to(16, 14);
   let description = terminal.read_line();
   let value = get_value(terminal);
   let product = Product { description, value };
 
   // define sale
-  let sale = Sale { client, product, amount };
+  let sale = Sale { client_code, product, amount };
 
   seller.new_sale(&sale);
 
-  terminal.move_to(18, 16);
+  terminal.move_to(18, 17);
 
   terminal.print(&format!(
     "{}",
     sale.total()
   ));
-  terminal.move_to(5, 19);
+  terminal.move_to(5, 20);
 
   terminal.print("Venda adicionada! deseja imprimir o recibo?");
-  terminal.move_to(5, 20);
+  terminal.move_to(5, 21);
   let command = terminal.read_line();
 
   if command == String::from("sim") {

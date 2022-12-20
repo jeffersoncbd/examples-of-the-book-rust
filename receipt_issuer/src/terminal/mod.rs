@@ -24,6 +24,7 @@ impl Terminal {
     execute!(
       self.stdout,
       crossterm_terminal::Clear(crossterm_terminal::ClearType::All),
+      crossterm_terminal::Clear(crossterm_terminal::ClearType::Purge),
       cursor::MoveTo(0,0)
     ).expect("Não foi possível limpar o terminal");
   }
