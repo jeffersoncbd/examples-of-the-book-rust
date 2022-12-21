@@ -1,6 +1,6 @@
 use crate::terminal::Terminal;
 
-pub fn get_amount(terminal: &mut Terminal) -> u32 {
+pub fn get(terminal: &mut Terminal) -> u32 {
   terminal.move_to(17, 13);
   let amount = terminal.read_line();
 
@@ -9,7 +9,7 @@ pub fn get_amount(terminal: &mut Terminal) -> u32 {
     Err(_) => {
       terminal.move_to(17, 13);
       terminal.print("                                     │");
-      return get_amount(terminal)
+      return get(terminal)
     },
   };
   amount

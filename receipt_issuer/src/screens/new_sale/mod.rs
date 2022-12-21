@@ -5,8 +5,8 @@ use crate::{
 };
 use crossterm::{execute, style::Print, cursor};
 
-mod get_client;
-mod get_amount;
+mod client;
+mod amount;
 
 pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
   terminal.clear();
@@ -42,10 +42,10 @@ pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
   terminal.print(seller.address.trim());
 
   // define client
-  let client_code = get_client::get_client_code(terminal, seller);
+  let client_code = client::get(terminal, seller);
 
   // define amount
-  let amount = get_amount(terminal);
+  let amount = amount::get(terminal);
 
   fn get_value(terminal: &mut Terminal) -> f64 {
     terminal.move_to(21, 15);

@@ -1,6 +1,6 @@
 use crate::{terminal::Terminal, structures::Client, screens::seller::Seller};
 
-fn get_code_for_user(terminal: &mut Terminal, seller: &Seller) -> Option<usize> {
+fn get_client_code(terminal: &mut Terminal, seller: &Seller) -> Option<usize> {
   terminal.move_to(13, 8);
   terminal.print("                                         │");
   terminal.move_to(13, 8);
@@ -13,15 +13,15 @@ fn get_code_for_user(terminal: &mut Terminal, seller: &Seller) -> Option<usize> 
   let code: usize = match code.trim().parse() {
     Ok(num) => num,
     Err(_) => {
-      return get_code_for_user(terminal, seller)
+      return get_client_code(terminal, seller)
     },
   };
 
   Some(code)
 }
 
-pub fn get_client_code(terminal: &mut Terminal, seller: &mut Seller) -> usize {
-  let code = get_code_for_user(terminal, seller);
+pub fn get(terminal: &mut Terminal, seller: &mut Seller) -> usize {
+  let code = get_client_code(terminal, seller);
 
   match code {
     Some(code) => {
@@ -36,7 +36,7 @@ pub fn get_client_code(terminal: &mut Terminal, seller: &mut Seller) -> usize {
           terminal.print(&client.address);
           return code
         },
-        None => return get_client_code(terminal, seller)
+        None => return get(terminal, seller)
       }
     },
     None => {
