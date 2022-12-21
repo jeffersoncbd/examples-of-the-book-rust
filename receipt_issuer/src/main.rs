@@ -34,6 +34,7 @@ fn application(terminal: &mut Terminal, seller: &mut Seller) {
     2 => screens::billing::load(terminal, seller),
     3 => screens::clients::load(terminal, seller),
     4 => screens::new_client::load(terminal, seller),
+    5 => screens::products::load(terminal, seller),
     0 => { terminal.end = true; },
     _ => panic!("Unexpected option"),
   }

@@ -9,8 +9,9 @@ pub fn load(terminal: &mut Terminal) -> u32 {
     vec![
       "[1] Nova venda",
       "[2] Consultar faturamento",
-      "[3] Listar clientes",
+      "[3] Clientes cadastrado",
       "[4] Novo cliente",
+      "[5] Produtos cadastrados",
       "[0] Encerrar"
     ],
     Some(vec!["Digite o número da opção desejada: "]),
@@ -20,7 +21,7 @@ pub fn load(terminal: &mut Terminal) -> u32 {
 
   execute!(
     terminal.stdout,
-    cursor::MoveTo(40, 10),
+    cursor::MoveTo(40, 11),
     cursor::Show,
     cursor::EnableBlinking,
   ).expect("Não foi possível configurar o cursor");
@@ -32,7 +33,7 @@ pub fn load(terminal: &mut Terminal) -> u32 {
     Err(_) => return load(terminal),
   };
 
-  if option > 4 {
+  if option > 5 {
     return load(terminal)
   }
   option

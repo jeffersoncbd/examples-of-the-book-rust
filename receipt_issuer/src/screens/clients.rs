@@ -39,7 +39,7 @@ pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
   execute!(
     terminal.stdout,
     cursor::Hide,
-  ).expect("Não foi possível imprimir a lista de clientes");
+  ).expect("Não foi possível configurar o cursor");
 
   terminal.read_line();
 }
