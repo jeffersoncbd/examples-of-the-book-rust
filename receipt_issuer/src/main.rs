@@ -13,11 +13,7 @@ fn main() {
 
   terminal.fake_loading();
 
-  // let mut seller = screens::seller::load(&mut terminal);
-  let mut seller = Seller::new(
-    String::from("Jefferson"),
-    String::from("Brasil")
-  );
+  let mut seller = screens::seller::load(&mut terminal);
 
   terminal.fake_loading();
 

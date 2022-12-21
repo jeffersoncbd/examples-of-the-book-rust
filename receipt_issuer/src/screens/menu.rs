@@ -1,26 +1,29 @@
 use crate::terminal::Terminal;
-use crossterm::{execute, style::Print, cursor};
+use crossterm::{execute, cursor};
+use interface_builder::{Application, Page};
 
 pub fn load(terminal: &mut Terminal) -> u32 {
-  terminal.clear();
+  let mut app = Application::new();
+  app.home(Page::new(
+    Some("[MENU] emissor de recibos"),
+    vec![
+      "[1] Nova venda",
+      "[2] Consultar faturamento",
+      "[3] Listar clientes",
+      "[4] Novo cliente",
+      "[0] Encerrar"
+    ],
+    Some(vec!["Digite o número da opção desejada: "]),
+    53, None
+  ));
+  app.run();
+
   execute!(
     terminal.stdout,
-    Print("\n\n"),
-    Print("  ╭─ [MENU] emissor de recibos ───────────────────────╮\n"),
-    Print("  │                                                   │\n"),
-    Print("  │  Selecione uma das opções abaixo:                 │\n"),
-    Print("  │                                                   │\n"),
-    Print("  │ [1] Nova venda                                    │\n"),
-    Print("  │ [2] Consultar faturamento                         │\n"),
-    Print("  │ [3] Listar Clientes                               │\n"),
-    Print("  │ [4] Novo Cliente                                  │\n"),
-    Print("  │ [0] Encerrar sistema                              │\n"),
-    Print("  │                                                   │\n"),
-    Print("  ╰───────────────────────────────────────────────────╯"),
-    cursor::MoveTo(38, 4),
+    cursor::MoveTo(40, 10),
     cursor::Show,
     cursor::EnableBlinking,
-  ).expect("Não foi possível imprimir o formulário do MENU");
+  ).expect("Não foi possível configurar o cursor");
 
   let option = terminal.read_line();
 

@@ -1,5 +1,6 @@
 use crate::{terminal::Terminal, structures::{Sale, Client}};
-use crossterm::{execute, style::Print, cursor};
+use crossterm::{execute, cursor};
+use interface_builder::{Application, Page};
 
 pub struct Seller {
   pub name: String,
@@ -17,30 +18,35 @@ impl Seller {
 }
 
 pub fn load(terminal: &mut Terminal) -> Seller {
-  terminal.clear();
+  let mut app = Application::new();
+  app.home(Page::new(
+    Some("Seja bem vindo vendedor!"),
+    vec![
+      "Antes de começar, faça o seu cadastro:",
+      "",
+      "Nome:",
+      "Endereço:",
+    ],
+    None,
+    53, None
+  ));
+  app.run();
+
+
   execute!(
     terminal.stdout,
-    Print("\n\n"),
-    Print("  ╭───────── Bem vindo ao emissor de recibos ─────────╮\n"),
-    Print("  │                                                   │\n"),
-    Print("  │ Antes de começar o vendedor deve ser cadastrado:  │\n"),
-    Print("  │                                                   │\n"),
-    Print("  │ Nome:                                             │\n"),
-    Print("  │ Endereço:                                         │\n"),
-    Print("  │                                                   │\n"),
-    Print("  ╰───────────────────────────────────────────────────╯"),
-    cursor::MoveTo(10, 6),
+    cursor::MoveTo(11, 5),
     cursor::Show,
     cursor::EnableBlinking,
   ).expect("Não foi possível imprimir o formulário de cadastro do vendedor");
 
   let name = terminal.read_line();
-  terminal.move_to(14, 7);
+  terminal.move_to(15, 6);
   let address = terminal.read_line();
 
-  terminal.move_to(4, 10);
-  println!("Se estes dados estiverem corretos, digite \"sim\":");
-  terminal.move_to(4, 11);
+  terminal.move_to(5, 9);
+  println!("Se estiver certo, digite \"sim\":");
+  terminal.move_to(5, 10);
   let confirmation = terminal.read_line();
   if confirmation != String::from("sim") {
     return load(terminal);

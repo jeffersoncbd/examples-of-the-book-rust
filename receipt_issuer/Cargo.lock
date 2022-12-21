@@ -189,6 +189,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "interface-builder"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d7a9ebc59b37a8bb8516323eea0ae31435a5ea231978f6c7e9146227438ec731"
+dependencies = [
+ "crossterm",
+]
+
+[[package]]
 name = "itoa"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -369,6 +378,7 @@ name = "receipt_issuer"
 version = "0.7.0"
 dependencies = [
  "crossterm",
+ "interface-builder",
  "pbr",
  "rust_decimal",
  "rust_decimal_macros",

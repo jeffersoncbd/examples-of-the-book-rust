@@ -3,43 +3,41 @@ use crate::{
   screens::{seller::Seller, receipt},
   structures::*
 };
-use crossterm::{execute, style::Print, cursor};
+use crossterm::{execute, cursor};
+use interface_builder::{Application, Page};
 
 mod client;
 mod amount;
 
 pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
-  terminal.clear();
+  let mut app = Application::new();
+  app.home(Page::new(
+    Some("[Nova venda] emissor de recibos"),
+    vec![
+      &format!("Vendedor: {}", seller.name),
+      &format!("Endereço: {}", seller.address),
+      "",
+      "[Cliente]",
+      "Código:",
+      "Nome:",
+      "Endereço:",
+      " ",
+      "[Itens]",
+      "Quantidade:",
+      "Descrição:",
+      "Valor unitário:",
+      "",
+      "Valor TOTAL:",
+    ],
+    Some(vec!["Para novo cliente, deixe o código em branco."]),
+    53, None
+  ));
+  app.run();
+
   execute!(
     terminal.stdout,
-    Print("\n\n"),
-    Print("  ╭─ [Nova venda] emissor de recibos ─────────────────╮\n"),
-    Print("  │                                                   │\n"),
-    Print("  │  Vendedor:                                        │\n"),
-    Print("  │  Endereço:                                        │\n"),
-    Print("  │                                                   │\n"),
-    Print("  │  [Cliente]                                        │\n"),
-    Print("  │  Código:                                          │\n"),
-    Print("  │  Nome:                                            │\n"),
-    Print("  │  Endereço:                                        │\n"),
-    Print("  │                                                   │\n"),
-    Print("  │  [Itens]                                          │\n"),
-    Print("  │  Quantidade:                                      │\n"),
-    Print("  │  Descrição:                                       │\n"),
-    Print("  │  Valor unitário:                                  │\n"),
-    Print("  │                                                   │\n"),
-    Print("  │  Valor TOTAL:                                     │\n"),
-    Print("  │                                                   │\n"),
-    Print("  ╰───────────────────────────────────────────────────╯\n"),
-    Print("     Para novo cliente, deixe o código em branco"),
     cursor::EnableBlinking,
-  ).expect("Não foi possível imprimir o formulário de nova venda");
-
-  // print seller data
-  terminal.move_to(15, 4);
-  terminal.print(seller.name.trim());
-  terminal.move_to(15, 5);
-  terminal.print(seller.address.trim());
+  ).expect("Não foi possível configurar o cursor");
 
   // define client
   let client_code = client::get(terminal, seller);
@@ -48,13 +46,13 @@ pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
   let amount = amount::get(terminal);
 
   fn get_value(terminal: &mut Terminal) -> f64 {
-    terminal.move_to(21, 15);
+    terminal.move_to(21, 14);
     let value = terminal.read_line();
 
     let value: f64 = match value.trim().parse() {
       Ok(num) => num,
       Err(_) => {
-        terminal.move_to(21, 15);
+        terminal.move_to(21, 14);
         terminal.print("                                 │");
         return get_value(terminal)
       },
@@ -62,7 +60,7 @@ pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
     value
   }
   // define product
-  terminal.move_to(16, 14);
+  terminal.move_to(16, 13);
   let description = terminal.read_line();
   let value = get_value(terminal);
   let product = Product { description, value };
@@ -72,16 +70,16 @@ pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
 
   seller.new_sale(&sale);
 
-  terminal.move_to(18, 17);
+  terminal.move_to(18, 16);
 
   terminal.print(&format!(
     "{}",
     sale.total()
   ));
-  terminal.move_to(5, 20);
+  terminal.move_to(5, 19);
 
-  terminal.print("Venda adicionada! deseja imprimir o recibo?");
-  terminal.move_to(5, 21);
+  terminal.print("Venda adicionada! deseja imprimir o recibo? ");
+  terminal.move_to(5, 20);
   let command = terminal.read_line();
 
   if command == String::from("sim") {

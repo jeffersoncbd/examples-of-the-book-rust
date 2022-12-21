@@ -1,44 +1,43 @@
-use crossterm::{execute, style::Print, cursor};
+use crossterm::{execute, cursor};
+use interface_builder::{Page, Application};
 
-use crate::{terminal::Terminal, screens::seller::Seller};
+use crate::{terminal::Terminal, screens::seller::Seller, structures::Client};
+
+fn parse_clients(clients: &Vec<Client>) -> Vec<String> {
+  let mut parsed_clients = Vec::new();
+
+  for (i, client) in clients.iter().enumerate() {
+    if i != 0 {
+      parsed_clients.push(String::from(""))
+    }
+    parsed_clients.push(format!("Código: {}", i));
+    parsed_clients.push(format!("Nome: {}", client.name));
+    parsed_clients.push(format!("Endereço: {}", client.address));
+  }
+
+  parsed_clients
+}
 
 pub fn load(terminal: &mut Terminal, seller: &mut Seller) {
-  terminal.clear();
+  let mut app = Application::new();
 
-  terminal.print("\n\n  ╭─ [Lista de Clientes] emissor de recibos ──────────╮\n");
-
-  if seller.clients.len() > 0 {
-    for (code, client) in seller.clients.iter().enumerate() {
-      execute!(
-        terminal.stdout,
-        Print("  │                                                   │\n"),
-        Print("  │  Code:                                            │"),
-        cursor::MoveToColumn(11),
-        Print(format!("{}", code)),
-        cursor::MoveToNextLine(1),
-        Print("  │  Nome:                                            │"),
-        cursor::MoveToColumn(11),
-        Print(&client.name),
-        cursor::MoveToNextLine(1),
-        Print("  │  Endereço:                                        │"),
-        cursor::MoveToColumn(15),
-        Print(&client.address),
-        cursor::MoveToNextLine(1),
-      ).expect("Não foi possível imprimir a lista de clientes");
-    }
+  let parsed = parse_clients(&seller.clients);
+  let parsed_clients = if seller.clients.len() > 0 {
+    parsed.iter().map(|s| s as &str).collect()
   } else {
-    execute!(
-      terminal.stdout,
-      Print("  │                                                   │\n"),
-      Print("  │  Ainda não há clientes cadastrados                │\n")
-    ).expect("Não foi possível imprimir a lista de clientes");
-  }
+    vec!["Ainda não há clientes cadastrados"]
+  };
+
+  app.home(Page::new(
+    Some("[Clientes cadastrados] emissor de recibos"),
+    parsed_clients,
+    Some(vec!["Pressione enter para voltar..."]),
+    53, None
+  ));
+  app.run();
 
   execute!(
     terminal.stdout,
-    Print("  │                                                   │\n"),
-    Print("  ╰───────────────────────────────────────────────────╯\n"),
-    Print("     Pressione enter para voltar..."),
     cursor::Hide,
   ).expect("Não foi possível imprimir a lista de clientes");
 

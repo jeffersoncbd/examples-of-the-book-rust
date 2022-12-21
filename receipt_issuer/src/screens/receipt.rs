@@ -3,63 +3,44 @@ use crate::{
   screens::seller::Seller,
   structures::Sale
 };
-use crossterm::{execute, style::Print, cursor};
+use crossterm::{execute, cursor};
+use interface_builder::{Application, Page};
 
 pub fn load(terminal: &mut Terminal, seller: &Seller, sale: &Sale) {
-  terminal.clear();
   let client = match seller.clients.get(sale.client_code) {
     Some(client) => client,
     None => panic!("O cliente cadastrado na venda não existe")
   };
+
+  let mut app = Application::new();
+  app.home(Page::new(
+    Some("[Recibo de venda]"),
+    vec![
+      &format!("Vendedor: {}", seller.name),
+      &format!("Endereço: {}", seller.address),
+      "",
+      &format!("Cliente: {}", client.name),
+      &format!("Endereço: {}", client.address),
+      "",
+      &format!("VALOR TOTAL: {}", sale.total()),
+      "",
+      "[Itens]",
+      &format!(
+        "[{}] {} - {} ... {}",
+        sale.amount,
+        sale.product.description,
+        sale.product.value,
+        sale.total()
+      )
+    ],
+    Some(vec!["Pressione enter para voltar..."]),
+    53, None
+  ));
+  app.run();
+
   execute!(
     terminal.stdout,
-    Print("\n\n"),
-    Print("  ╭─ [Recibo de venda] ───────────────────────────────╮\n"),
-    Print("  │                                          ╭──────╮ │\n"),
-    Print("  │  Vendedor:                               │bonita│ │\n"),
-    cursor::MoveTo(15,4),
-    Print(format!("{}", seller.name)),
-    cursor::MoveTo(0,5),
-    Print("  │  Endereço:                               │ essa │ │\n"),
-    cursor::MoveTo(15,5),
-    Print(format!("{}", seller.address)),
-    cursor::MoveTo(0,6),
-    Print("  │                                          │ logo │ │\n"),
-    Print("  │  Cliente:                                ╰──────╯ │\n"),
-    cursor::MoveTo(14,7),
-    Print(format!("{}", client.name)),
-    cursor::MoveTo(0,8),
-    Print("  │  Endereço:                                        │\n"),
-    cursor::MoveTo(15,8),
-    Print(format!("{}", client.address)),
-    cursor::MoveTo(0,9),
-    Print("  │                                                   │\n"),
-    cursor::MoveTo(
-      39 - (sale.total().to_string().len() as u16),
-      9
-    ),
-    Print(format!("VALOR TOTAL: {}\n", sale.total())),
-    Print("  │                                                   │\n"),
-    Print("  │  [Itens]                                          │\n"),
-    Print("  │                                                   │\n"),
-    Print("  │  ...............................................  │\n"),
-    cursor::MoveTo(5,13),
-    Print(format!(
-      "[{}] {} - {} ",
-      sale.amount,
-      sale.product.description,
-      sale.product.value
-    )),
-    cursor::MoveTo(
-      51 - (sale.total().to_string().len() as u16),
-      13
-    ),
-    Print(format!(" {}", sale.total())),
-    cursor::MoveTo(0,14),
-    Print("  │                                                   │\n"),
-    Print("  ╰───────────────────────────────────────────────────╯\n"),
-    Print("     Pressione enter para voltar..."),
     cursor::Hide,
-  ).expect("Não foi possível imprimir o Recibo de venda");
+  ).expect("Não foi possível configurar o cursor");
   terminal.read_line();
 }
